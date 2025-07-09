@@ -1,4 +1,5 @@
 const usuarios = require("../data");
+const { encriptarPassword } = require("../helpers/hasher");
 const Usuario = require("../models/usuario.model");
 
 const obtenerUsuarios = async (req, res) => {
@@ -22,7 +23,14 @@ const crearUsuario = async (req, res) => {
       return res.status(400).json({ mensaje: "El correo ya eta registrado" });
     }
 
-    const nuevo = await Usuario.create({ nombre, correo, password, rol });
+    const passwordHash = await encriptarPassword(password);
+
+    const nuevo = await Usuario.create({
+      nombre,
+      correo,
+      password: passwordHash,
+      rol,
+    });
 
     //   usuarios.push(nuevo);
     res.status(201).json({
